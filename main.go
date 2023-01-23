@@ -1,16 +1,29 @@
 package main
 
 import (
-	"github.com/mossaka/go-wit-bindgen-variants/exports"
+	optionresult "github.com/mossaka/go-wit-bindgen-variants/result"
+	variants "github.com/mossaka/go-wit-bindgen-variants/variants"
 )
 
 func init() {
-	exports.SetExports(VariantsExportImpl{})
+	variants.SetVariants(VariantsImpl{})
 }
 
-type VariantsExportImpl struct{}
+type VariantsImpl struct{}
 
-func (i VariantsExportImpl) TestImports() {
+func (i VariantsImpl) TestImports() {
+
+	// variants.B(234)
+
+	var a optionresult.Option[uint32]
+	a.Set(42)
+	b := variants.OptionRoundtrip(a)
+	println(b.Unwrap())
+
+	var c optionresult.Result[uint32, uint32]
+	c.Set(42)
+	d := variants.ResultRoundtrip(c)
+	println(d.Unwrap())
 
 }
 
