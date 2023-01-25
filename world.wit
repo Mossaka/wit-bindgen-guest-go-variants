@@ -1,6 +1,5 @@
 interface imports {
 	option-roundtrip: func(a: option<u32>) -> option<u8>
-	b: func(a: u32)
 	result-roundtrip: func(a: result<u32, u32>) -> result<u64, u8>
 
 	// enum e1 { a, b }
@@ -16,8 +15,8 @@ interface exports {
 
 	test-imports: func()
 
-	// roundtrip-option: func(a: option<u32>) -> option<u8>
-	// roundtrip-result: func(a: result<u32, u32>) -> result<u64, u8>
+	roundtrip-option: func(a: option<u32>) -> option<u32>
+	roundtrip-result: func(a: result<u32, u32>) -> result<u64, u8>
 
 	// enum e1 { a, b }
 	// roundtrip-enum: func(a: e1) -> e1

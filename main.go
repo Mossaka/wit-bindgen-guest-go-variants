@@ -24,7 +24,26 @@ func (i VariantsImpl) TestImports() {
 	c.Set(42)
 	d := variants.ResultRoundtrip(c)
 	println(d.Unwrap())
+}
 
+func (i VariantsImpl) RoundtripOption(a optionresult.Option[uint32]) optionresult.Option[uint8] {
+	var ret optionresult.Option[uint8]
+	if a.IsSome() {
+		ret.Set(uint8(a.Unwrap()))
+	} else {
+		ret.Unset()
+	}
+	return ret
+}
+
+func (i VariantsImpl) RoundtripResult(a optionresult.Result[uint32, uint32]) optionresult.Result[uint64, uint8] {
+	var ret optionresult.Result[uint64, uint8]
+	if a.IsOk() {
+		ret.Set(uint64(a.Unwrap()))
+	} else {
+		ret.SetErr(uint8(a.UnwrapErr()))
+	}
+	return ret
 }
 
 func main() {
