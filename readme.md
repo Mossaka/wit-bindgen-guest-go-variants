@@ -1,10 +1,7 @@
 ## An hypothetical example of wit-bindgen go guest import generation
 
-Calling `wit-bindgen guest go -i imports.wit` will generate
+## Build
+make build
 
-```
-/imports
-    imports.go
-    imports.c
-    imports.h
-```
+## Debug
+use `wasm-tools print variants.wasm > variants.wat` to exaimne the generated wasm module
