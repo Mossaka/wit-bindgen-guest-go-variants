@@ -27,9 +27,10 @@ func (o Option[T]) Unwrap() T {
   return o.Val
 }
 
-func (o *Option[T]) Set(val T) {
+func (o *Option[T]) Set(val T) T {
   o.Kind = Some
   o.Val = val
+  return val
 }
 
 func (o *Option[T]) Unset() {
@@ -71,12 +72,14 @@ func (r Result[T, E]) UnwrapErr() E {
   return r.Err
 }
 
-func (r *Result[T, E]) Set(val T) {
+func (r *Result[T, E]) Set(val T) T {
   r.Kind = Ok
   r.Val = val
+  return val
 }
 
-func (r *Result[T, E]) SetErr(err E) {
+func (r *Result[T, E]) SetErr(err E) E {
   r.Kind = Err
   r.Err = err
+  return err
 }

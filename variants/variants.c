@@ -7,6 +7,19 @@ typedef struct {
 } imports_option_option_ar_t;
 
 typedef struct {
+  bool is_err;
+  union {
+    uint64_t ok;
+    uint8_t err;
+  } val;
+} imports_result_u64_u8_t;
+
+typedef struct {
+  bool is_some;
+  imports_result_u32_void_t val;
+} imports_option_result_u32_void_t;
+
+typedef struct {
   bool is_some;
   variants_option_u32_t val;
 } variants_option_option_u32_t;
@@ -21,6 +34,11 @@ typedef struct {
   variants_f1_t val;
 } variants_option_f1_t;
 
+typedef struct {
+  bool is_some;
+  variants_result_u32_void_t val;
+} variants_option_result_u32_void_t;
+
 __attribute__((import_module("imports"), import_name("option-roundtrip1")))
 void __wasm_import_imports_option_roundtrip1(int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
 
@@ -32,6 +50,15 @@ void __wasm_import_imports_option_roundtrip3(int32_t, int32_t, int32_t);
 
 __attribute__((import_module("imports"), import_name("option-roundtrip4")))
 void __wasm_import_imports_option_roundtrip4(int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
+
+__attribute__((import_module("imports"), import_name("result-roundtrip")))
+void __wasm_import_imports_result_roundtrip(int32_t, int32_t, int32_t);
+
+__attribute__((import_module("imports"), import_name("roundtrip-option-result")))
+void __wasm_import_imports_roundtrip_option_result(int32_t, int32_t, int32_t, int32_t);
+
+__attribute__((import_module("imports"), import_name("roundtrip-result-option")))
+void __wasm_import_imports_roundtrip_result_option(int32_t, int32_t, int32_t, int32_t);
 
 __attribute__((weak, export_name("cabi_realloc")))
 void *cabi_realloc(void *ptr, size_t orig_size, size_t org_align, size_t new_size) {
@@ -372,6 +399,162 @@ bool imports_option_roundtrip4(imports_ar_t *maybe_a, imports_ar_t *ret) {
   return option16.is_some;
 }
 
+bool imports_result_roundtrip(imports_result_u32_u32_t *a, uint64_t *ret, uint8_t *err) {
+  int32_t result;
+  int32_t result1;
+  if ((*a).is_err) {
+    const uint32_t *payload0 = &(*a).val.err;result = 1;
+    result1 = (int32_t) (*payload0);
+  } else {
+    const uint32_t *payload = &(*a).val.ok;result = 0;
+    result1 = (int32_t) (*payload);
+  }
+  __attribute__((aligned(8)))
+  uint8_t ret_area[16];
+  int32_t ptr = (int32_t) &ret_area;
+  __wasm_import_imports_result_roundtrip(result, result1, ptr);
+  imports_result_u64_u8_t result2;
+  switch ((int32_t) (*((uint8_t*) (ptr + 0)))) {
+    case 0: {
+      result2.is_err = false;
+      result2.val.ok = (uint64_t) (*((int64_t*) (ptr + 8)));
+      break;
+    }
+    case 1: {
+      result2.is_err = true;
+      result2.val.err = (uint8_t) ((int32_t) (*((uint8_t*) (ptr + 8))));
+      break;
+    }
+  }
+  if (!result2.is_err) {
+    *ret = result2.val.ok;
+    return 1;
+  } else {
+    *err = result2.val.err;
+    return 0;
+  }
+}
+
+bool imports_roundtrip_option_result(imports_result_u32_void_t *maybe_a, imports_result_u32_void_t *ret) {
+  imports_option_result_u32_void_t a;
+  a.is_some = maybe_a != NULL;if (maybe_a) {
+    a.val = *maybe_a;
+  }
+  int32_t option;
+  int32_t option4;
+  int32_t option5;
+  if ((a).is_some) {
+    const imports_result_u32_void_t *payload0 = &(a).val;
+    int32_t result;
+    int32_t result3;
+    if ((*payload0).is_err) {
+      result = 1;
+      result3 = 0;
+    } else {
+      const uint32_t *payload1 = &(*payload0).val.ok;result = 0;
+      result3 = (int32_t) (*payload1);
+    }
+    option = 1;
+    option4 = result;
+    option5 = result3;
+  } else {
+    option = 0;
+    option4 = 0;
+    option5 = 0;
+  }
+  __attribute__((aligned(4)))
+  uint8_t ret_area[12];
+  int32_t ptr = (int32_t) &ret_area;
+  __wasm_import_imports_roundtrip_option_result(option, option4, option5, ptr);
+  imports_option_result_u32_void_t option7;
+  switch ((int32_t) (*((uint8_t*) (ptr + 0)))) {
+    case 0: {
+      option7.is_some = false;
+      break;
+    }
+    case 1: {
+      option7.is_some = true;
+      imports_result_u32_void_t result6;
+      switch ((int32_t) (*((uint8_t*) (ptr + 4)))) {
+        case 0: {
+          result6.is_err = false;
+          result6.val.ok = (uint32_t) (*((int32_t*) (ptr + 8)));
+          break;
+        }
+        case 1: {
+          result6.is_err = true;
+          break;
+        }
+      }
+      
+      option7.val = result6;
+      break;
+    }
+  }
+  *ret = option7.val;
+  return option7.is_some;
+}
+
+bool imports_roundtrip_result_option(imports_result_option_u32_void_t *a, imports_option_u32_t *ret) {
+  int32_t result;
+  int32_t result4;
+  int32_t result5;
+  if ((*a).is_err) {
+    result = 1;
+    result4 = 0;
+    result5 = 0;
+  } else {
+    const imports_option_u32_t *payload = &(*a).val.ok;int32_t option;
+    int32_t option2;
+    if ((*payload).is_some) {
+      const uint32_t *payload1 = &(*payload).val;
+      option = 1;
+      option2 = (int32_t) (*payload1);
+    } else {
+      option = 0;
+      option2 = 0;
+    }
+    result = 0;
+    result4 = option;
+    result5 = option2;
+  }
+  __attribute__((aligned(4)))
+  uint8_t ret_area[12];
+  int32_t ptr = (int32_t) &ret_area;
+  __wasm_import_imports_roundtrip_result_option(result, result4, result5, ptr);
+  imports_result_option_u32_void_t result7;
+  switch ((int32_t) (*((uint8_t*) (ptr + 0)))) {
+    case 0: {
+      result7.is_err = false;
+      imports_option_u32_t option6;
+      switch ((int32_t) (*((uint8_t*) (ptr + 4)))) {
+        case 0: {
+          option6.is_some = false;
+          break;
+        }
+        case 1: {
+          option6.is_some = true;
+          option6.val = (uint32_t) (*((int32_t*) (ptr + 8)));
+          break;
+        }
+      }
+      
+      result7.val.ok = option6;
+      break;
+    }
+    case 1: {
+      result7.is_err = true;
+      break;
+    }
+  }
+  if (!result7.is_err) {
+    *ret = result7.val.ok;
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 __attribute__((export_name("test-imports")))
 void __wasm_export_variants_test_imports(void) {
   variants_test_imports();
@@ -518,6 +701,138 @@ int32_t __wasm_export_variants_roundtrip_option4(int32_t arg, int32_t arg0) {
     *((int8_t*)(ptr + 1)) = *payload2;
   } else {
     *((int8_t*)(ptr + 0)) = 0;
+  }
+  return ptr;
+}
+
+__attribute__((export_name("roundtrip-result")))
+int32_t __wasm_export_variants_roundtrip_result(int32_t arg, int32_t arg0) {
+  variants_result_ar_void_t result;
+  switch (arg) {
+    case 0: {
+      result.is_err = false;
+      result.val.ok = (variants_ar_t) {
+        (uint32_t) (arg0),
+      };
+      break;
+    }
+    case 1: {
+      result.is_err = true;
+      break;
+    }
+  }
+  variants_result_ar_void_t arg1 = result;
+  variants_result_ar_void_t ret;
+  variants_ar_t ok;
+  ret.is_err = !variants_roundtrip_result(&arg1, &ok);
+  if (!ret.is_err) {
+    ret.val.ok = ok;
+  }
+  int32_t ptr = (int32_t) &RET_AREA;
+  if ((ret).is_err) {
+    *((int8_t*)(ptr + 0)) = 1;
+  } else {
+    const variants_ar_t *payload = &(ret).val.ok;*((int8_t*)(ptr + 0)) = 0;
+    *((int32_t*)(ptr + 4)) = (int32_t) ((*payload).a);
+  }
+  return ptr;
+}
+
+__attribute__((export_name("roundtrip-option-result")))
+int32_t __wasm_export_variants_roundtrip_option_result(int32_t arg, int32_t arg0, int32_t arg1) {
+  variants_option_result_u32_void_t option;
+  switch (arg) {
+    case 0: {
+      option.is_some = false;
+      break;
+    }
+    case 1: {
+      option.is_some = true;
+      variants_result_u32_void_t result;
+      switch (arg0) {
+        case 0: {
+          result.is_err = false;
+          result.val.ok = (uint32_t) (arg1);
+          break;
+        }
+        case 1: {
+          result.is_err = true;
+          break;
+        }
+      }
+      
+      option.val = result;
+      break;
+    }
+  }
+  variants_result_u32_void_t val;
+  bool ret = variants_roundtrip_option_result(option.is_some ? &(option.val) : NULL, &val);
+  
+  variants_option_result_u32_void_t ret2;
+  ret2.is_some = ret;
+  ret2.val = val;
+  int32_t ptr = (int32_t) &RET_AREA;
+  if ((ret2).is_some) {
+    const variants_result_u32_void_t *payload3 = &(ret2).val;
+    *((int8_t*)(ptr + 0)) = 1;
+    if ((*payload3).is_err) {
+      *((int8_t*)(ptr + 4)) = 1;
+    } else {
+      const uint32_t *payload4 = &(*payload3).val.ok;*((int8_t*)(ptr + 4)) = 0;
+      *((int32_t*)(ptr + 8)) = (int32_t) (*payload4);
+    }
+  } else {
+    *((int8_t*)(ptr + 0)) = 0;
+  }
+  return ptr;
+}
+
+__attribute__((export_name("roundtrip-result-option")))
+int32_t __wasm_export_variants_roundtrip_result_option(int32_t arg, int32_t arg0, int32_t arg1) {
+  variants_result_option_u32_void_t result;
+  switch (arg) {
+    case 0: {
+      result.is_err = false;
+      variants_option_u32_t option;
+      switch (arg0) {
+        case 0: {
+          option.is_some = false;
+          break;
+        }
+        case 1: {
+          option.is_some = true;
+          option.val = (uint32_t) (arg1);
+          break;
+        }
+      }
+      
+      result.val.ok = option;
+      break;
+    }
+    case 1: {
+      result.is_err = true;
+      break;
+    }
+  }
+  variants_result_option_u32_void_t arg2 = result;
+  variants_result_option_u32_void_t ret;
+  variants_option_u32_t ok;
+  ret.is_err = !variants_roundtrip_result_option(&arg2, &ok);
+  if (!ret.is_err) {
+    ret.val.ok = ok;
+  }
+  int32_t ptr = (int32_t) &RET_AREA;
+  if ((ret).is_err) {
+    *((int8_t*)(ptr + 0)) = 1;
+  } else {
+    const variants_option_u32_t *payload = &(ret).val.ok;*((int8_t*)(ptr + 0)) = 0;
+    if ((*payload).is_some) {
+      const uint32_t *payload4 = &(*payload).val;
+      *((int8_t*)(ptr + 4)) = 1;
+      *((int32_t*)(ptr + 8)) = (int32_t) (*payload4);
+    } else {
+      *((int8_t*)(ptr + 4)) = 0;
+    }
   }
   return ptr;
 }

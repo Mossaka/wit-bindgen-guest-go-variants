@@ -47,6 +47,26 @@ func (i VariantsImpl) TestImports() {
 	b4 := variants.ImportsOptionRoundtrip4(arg4)
 	println(b4.Unwrap().A.Unwrap().Unwrap())
 
+	var arg5 variants.Result[uint32, uint32]
+	arg5.Set(5)
+	b5 := variants.ImportsResultRoundtrip(arg5)
+	println(b5.Unwrap())
+
+	var arg6 variants.Option[variants.Result[uint32, struct{}]]
+	arg6.Set(variants.Result[uint32, struct{}]{
+		Kind: variants.Ok,
+		Val:  5,
+	})
+	b6 := variants.ImportsRoundtripOptionResult(arg6)
+	println(b6.Unwrap().Unwrap())
+
+	var arg7 variants.Result[variants.Option[uint32], struct{}]
+	arg7.Set(variants.Option[uint32]{
+		Kind: variants.Some,
+		Val:  5,
+	})
+	b7 := variants.ImportsRoundtripResultOption(arg7)
+	println(b7.Unwrap().Unwrap())
 }
 
 func (i VariantsImpl) RoundtripOption1(a variants.Option[variants.Option[uint32]]) variants.Option[variants.Option[uint32]] {
@@ -59,6 +79,15 @@ func (i VariantsImpl) RoundtripOption3(a variants.Option[uint32]) variants.Optio
 	return a
 }
 func (i VariantsImpl) RoundtripOption4(a variants.Option[variants.VariantsF1]) variants.Option[variants.VariantsF1] {
+	return a
+}
+func (i VariantsImpl) RoundtripResult(a variants.Result[variants.VariantsAr, struct{}]) variants.Result[variants.VariantsAr, struct{}] {
+	return a
+}
+func (i VariantsImpl) RoundtripOptionResult(a variants.Option[variants.Result[uint32, struct{}]]) variants.Option[variants.Result[uint32, struct{}]] {
+	return a
+}
+func (i VariantsImpl) RoundtripResultOption(a variants.Result[variants.Option[uint32], struct{}]) variants.Result[variants.Option[uint32], struct{}] {
 	return a
 }
 

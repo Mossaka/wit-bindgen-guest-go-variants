@@ -18,6 +18,14 @@ class MyImports(imports.Imports):
         return a
     def option_roundtrip4(self, a: Optional[Ar]) -> Optional[Ar]:
         return a
+    def result_roundtrip(self, a: Result[int, int]) -> Result[int, int]:
+        print(a)
+        return a
+    def roundtrip_option_result(self, a: Optional[Result[int, None]]) -> Optional[Result[int, None]]:
+        return a
+    def roundtrip_result_option(self, a: Result[Optional[int], None]) -> Result[Optional[int], None]:
+        return a
+
 
 class Logging(wasi_logging.WasiLogging):
     def log(self, level: Level, context: str, message: str) -> None:
@@ -39,8 +47,15 @@ def run() -> None:
     assert(wasm.roundtrip_option3(store, None) == None)
     print(wasm.roundtrip_option3(store, 1))
 
-    # assert(wasm.roundtrip_result(store, Ok(Ar(1))) == Ok(Ar(1)))
-    # assert(wasm.roundtrip_result(store, Err(1)) == Err(None))
+    assert(wasm.roundtrip_result(store, Ok(Ar(1))) == Ok(Ar(1)))
+    assert(wasm.roundtrip_result(store, Err(None)) == Err(None))
+
+    assert(wasm.roundtrip_option_result(store, None) == None)
+    assert(wasm.roundtrip_option_result(store, Ok(1)) == Ok(1))
+    assert(wasm.roundtrip_option_result(store, Err(None)) == Err(None))
+    
+    assert(wasm.roundtrip_result_option(store, Ok(None)) == Ok(None))
+    assert(wasm.roundtrip_result_option(store, Ok(1)) == Ok(1))
 
 if __name__ == '__main__':
     run()
