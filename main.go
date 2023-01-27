@@ -1,7 +1,6 @@
 package main
 
 import (
-	optionresult "github.com/mossaka/go-wit-bindgen-variants/result"
 	variants "github.com/mossaka/go-wit-bindgen-variants/variants"
 )
 
@@ -13,37 +12,54 @@ type VariantsImpl struct{}
 
 func (i VariantsImpl) TestImports() {
 
-	// variants.B(234)
+	var inner_a variants.Option[variants.Option[uint32]]
+	inner_a.Set(variants.Option[uint32]{
+		Kind: variants.Some,
+		Val:  42,
+	})
+	a := variants.ImportsAr{
+		A: inner_a,
+		B: variants.ImportsR2{
+			C: 42,
+		},
+	}
+	var arg variants.Option[variants.Option[variants.ImportsAr]]
+	arg.Set(variants.Option[variants.ImportsAr]{
+		Kind: variants.Some,
+		Val:  a,
+	})
+	b := variants.ImportsOptionRoundtrip1(arg)
+	println(b.Unwrap().Unwrap().A.Unwrap().Unwrap())
 
-	var a optionresult.Option[uint32]
-	a.Set(42)
-	b := variants.OptionRoundtrip(a)
-	println(b.Unwrap())
+	var d variants.Option[uint32]
+	d.Set(42)
+	var e variants.Option[variants.Option[uint32]]
+	e.Set(d)
+	f := variants.ImportsOptionRoundtrip2(e)
+	println(f.Unwrap().Unwrap())
 
-	var c optionresult.Result[uint32, uint32]
-	c.Set(42)
-	d := variants.ResultRoundtrip(c)
-	println(d.Unwrap())
+	arg3 := variants.Option[uint32]{Kind: variants.Some, Val: 42}
+	b3 := variants.ImportsOptionRoundtrip3(arg3)
+	println(b3.Unwrap())
+
+	var arg4 variants.Option[variants.ImportsAr]
+	arg4.Set(a)
+	b4 := variants.ImportsOptionRoundtrip4(arg4)
+	println(b4.Unwrap().A.Unwrap().Unwrap())
+
 }
 
-func (i VariantsImpl) RoundtripOption(a optionresult.Option[uint32]) optionresult.Option[uint8] {
-	var ret optionresult.Option[uint8]
-	if a.IsSome() {
-		ret.Set(uint8(a.Unwrap()))
-	} else {
-		ret.Unset()
-	}
-	return ret
+func (i VariantsImpl) RoundtripOption1(a variants.Option[variants.Option[uint32]]) variants.Option[variants.Option[uint32]] {
+	return a
 }
-
-func (i VariantsImpl) RoundtripResult(a optionresult.Result[uint32, uint32]) optionresult.Result[uint64, uint8] {
-	var ret optionresult.Result[uint64, uint8]
-	if a.IsOk() {
-		ret.Set(uint64(a.Unwrap()))
-	} else {
-		ret.SetErr(uint8(a.UnwrapErr()))
-	}
-	return ret
+func (i VariantsImpl) RoundtripOption2(a variants.Option[variants.VariantsAr]) variants.Option[variants.VariantsAr] {
+	return a
+}
+func (i VariantsImpl) RoundtripOption3(a variants.Option[uint32]) variants.Option[uint32] {
+	return a
+}
+func (i VariantsImpl) RoundtripOption4(a variants.Option[variants.VariantsF1]) variants.Option[variants.VariantsF1] {
+	return a
 }
 
 func main() {

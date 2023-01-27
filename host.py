@@ -1,4 +1,4 @@
-from host import Descriptor, VariantsImports, WasiStream, imports, wasi_filesystem, wasi_logging, wasi_poll, Variants
+from host import Ar, Descriptor, VariantsImports, WasiStream, imports, wasi_filesystem, wasi_logging, wasi_poll, Variants
 from typing import Optional, Tuple
 import sys
 import wasmtime
@@ -10,10 +10,13 @@ from host.types import Err, Ok, Result
 
 
 class MyImports(imports.Imports):
-    def option_roundtrip(self, a: Optional[int]) -> Optional[int]:
+    def option_roundtrip1(self, a: Optional[Optional[Ar]]) -> Optional[Optional[Ar]]:
         return a
-
-    def result_roundtrip(self, a: Result[int, int]) -> Result[int, int]:
+    def option_roundtrip2(self, a: Optional[Optional[int]]) -> Optional[Optional[int]]:
+        return a
+    def option_roundtrip3(self, a: Optional[int]) -> Optional[int]:
+        return a
+    def option_roundtrip4(self, a: Optional[Ar]) -> Optional[Ar]:
         return a
 
 class Logging(wasi_logging.WasiLogging):
@@ -33,11 +36,11 @@ def run() -> None:
     wasm = Variants(store, VariantsImports(MyImports(), Logging(), Filesystem(), Poll()))
     
     wasm.test_imports(store)
-    assert(wasm.roundtrip_option(store, None) == None)
-    print(wasm.roundtrip_option(store, 1))
+    assert(wasm.roundtrip_option3(store, None) == None)
+    print(wasm.roundtrip_option3(store, 1))
 
-    assert(wasm.roundtrip_result(store, Ok(1)) == Ok(1))
-    assert(wasm.roundtrip_result(store, Err(1)) == Err(1))
+    # assert(wasm.roundtrip_result(store, Ok(Ar(1))) == Ok(Ar(1)))
+    # assert(wasm.roundtrip_result(store, Err(1)) == Err(None))
 
 if __name__ == '__main__':
     run()
