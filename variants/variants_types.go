@@ -1,40 +1,62 @@
 package variants
 
-type OptionKind int
+// inspired from https://github.com/moznion/go-optional
+
+type optionKind int
 
 const (
-None OptionKind = iota
-Some
+none optionKind = iota
+some
 )
 
 type Option[T any] struct {
-  Kind OptionKind
-  Val  T
+  kind optionKind
+  val  T
 }
 
+// IsNone returns true if the option is None.
 func (o Option[T]) IsNone() bool {
-  return o.Kind == None
+  return o.kind == none
 }
 
+// IsSome returns true if the option is Some.
 func (o Option[T]) IsSome() bool {
-  return o.Kind == Some
+  return o.kind == some
 }
 
+// Unwrap returns the value if the option is Some.
 func (o Option[T]) Unwrap() T {
-  if o.Kind != Some {
+  if o.kind != some {
     panic("Option is None")
   }
-  return o.Val
+  return o.val
 }
 
+// Set sets the value and returns it.
 func (o *Option[T]) Set(val T) T {
-  o.Kind = Some
-  o.Val = val
+  o.kind = some
+  o.val = val
   return val
 }
 
+// Unset sets the value to None.
 func (o *Option[T]) Unset() {
-  o.Kind = None
+  o.kind = none
+}
+
+// Some is a constructor for Option[T] which represents Some.
+func Some[T any](v T) Option[T] {
+  return Option[T]{
+    kind: some,
+    val:  v,
+  }
+}
+
+// None is a constructor for Option[T] which represents None.
+func None[T any]() Option[T] {
+  return Option[T]{
+    kind: none,
+  }
 }
 
 type ResultKind int
@@ -83,3 +105,4 @@ func (r *Result[T, E]) SetErr(err E) E {
   r.Err = err
   return err
 }
+

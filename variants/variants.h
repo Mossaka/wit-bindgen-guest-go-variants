@@ -94,6 +94,7 @@ bool imports_option_roundtrip1(imports_option_ar_t *maybe_a, imports_option_ar_t
 bool imports_option_roundtrip2(imports_option_u32_t *maybe_a, imports_option_u32_t *ret);
 bool imports_option_roundtrip3(uint32_t *maybe_a, uint32_t *ret);
 bool imports_option_roundtrip4(imports_ar_t *maybe_a, imports_ar_t *ret);
+void imports_option_roundtrip5(uint32_t *maybe_a, imports_option_u32_t *ret0, uint32_t *ret1);
 bool imports_result_roundtrip(imports_result_u32_u32_t *a, uint64_t *ret, uint8_t *err);
 bool imports_roundtrip_option_result(imports_result_u32_void_t *maybe_a, imports_result_u32_void_t *ret);
 bool imports_roundtrip_result_option(imports_result_option_u32_void_t *a, imports_option_u32_t *ret);

@@ -51,6 +51,9 @@ void __wasm_import_imports_option_roundtrip3(int32_t, int32_t, int32_t);
 __attribute__((import_module("imports"), import_name("option-roundtrip4")))
 void __wasm_import_imports_option_roundtrip4(int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
 
+__attribute__((import_module("imports"), import_name("option-roundtrip5")))
+void __wasm_import_imports_option_roundtrip5(int32_t, int32_t, int32_t);
+
 __attribute__((import_module("imports"), import_name("result-roundtrip")))
 void __wasm_import_imports_result_roundtrip(int32_t, int32_t, int32_t);
 
@@ -397,6 +400,41 @@ bool imports_option_roundtrip4(imports_ar_t *maybe_a, imports_ar_t *ret) {
   }
   *ret = option16.val;
   return option16.is_some;
+}
+
+void imports_option_roundtrip5(uint32_t *maybe_a, imports_option_u32_t *ret0, uint32_t *ret1) {
+  imports_option_u32_t a;
+  a.is_some = maybe_a != NULL;if (maybe_a) {
+    a.val = *maybe_a;
+  }
+  int32_t option;
+  int32_t option1;
+  if ((a).is_some) {
+    const uint32_t *payload0 = &(a).val;
+    option = 1;
+    option1 = (int32_t) (*payload0);
+  } else {
+    option = 0;
+    option1 = 0;
+  }
+  __attribute__((aligned(4)))
+  uint8_t ret_area[12];
+  int32_t ptr = (int32_t) &ret_area;
+  __wasm_import_imports_option_roundtrip5(option, option1, ptr);
+  imports_option_u32_t option2;
+  switch ((int32_t) (*((uint8_t*) (ptr + 0)))) {
+    case 0: {
+      option2.is_some = false;
+      break;
+    }
+    case 1: {
+      option2.is_some = true;
+      option2.val = (uint32_t) (*((int32_t*) (ptr + 4)));
+      break;
+    }
+  }
+  *ret0 = option2;
+  *ret1 = (uint32_t) (*((int32_t*) (ptr + 8)));
 }
 
 bool imports_result_roundtrip(imports_result_u32_u32_t *a, uint64_t *ret, uint8_t *err) {

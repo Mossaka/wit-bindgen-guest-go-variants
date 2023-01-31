@@ -12,22 +12,15 @@ type VariantsImpl struct{}
 
 func (i VariantsImpl) TestImports() {
 
-	var inner_a variants.Option[variants.Option[uint32]]
-	inner_a.Set(variants.Option[uint32]{
-		Kind: variants.Some,
-		Val:  42,
-	})
+	inner_a := variants.Some[variants.Option[uint32]](variants.Some[uint32](42))
 	a := variants.ImportsAr{
 		A: inner_a,
 		B: variants.ImportsR2{
 			C: 42,
 		},
 	}
-	var arg variants.Option[variants.Option[variants.ImportsAr]]
-	arg.Set(variants.Option[variants.ImportsAr]{
-		Kind: variants.Some,
-		Val:  a,
-	})
+	arg := variants.Some[variants.Option[variants.ImportsAr]](variants.Some[variants.ImportsAr](a))
+
 	b := variants.ImportsOptionRoundtrip1(arg)
 	println(b.Unwrap().Unwrap().A.Unwrap().Unwrap())
 
@@ -38,12 +31,11 @@ func (i VariantsImpl) TestImports() {
 	f := variants.ImportsOptionRoundtrip2(e)
 	println(f.Unwrap().Unwrap())
 
-	arg3 := variants.Option[uint32]{Kind: variants.Some, Val: 42}
+	arg3 := variants.Some[uint32](42)
 	b3 := variants.ImportsOptionRoundtrip3(arg3)
 	println(b3.Unwrap())
 
-	var arg4 variants.Option[variants.ImportsAr]
-	arg4.Set(a)
+	arg4 := variants.Some[variants.ImportsAr](a)
 	b4 := variants.ImportsOptionRoundtrip4(arg4)
 	println(b4.Unwrap().A.Unwrap().Unwrap())
 
@@ -61,12 +53,13 @@ func (i VariantsImpl) TestImports() {
 	println(b6.Unwrap().Unwrap())
 
 	var arg7 variants.Result[variants.Option[uint32], struct{}]
-	arg7.Set(variants.Option[uint32]{
-		Kind: variants.Some,
-		Val:  5,
-	})
+	arg7.Set(variants.Some[uint32](5))
 	b7 := variants.ImportsRoundtripResultOption(arg7)
 	println(b7.Unwrap().Unwrap())
+
+	re1, re2 := variants.ImportsOptionRoundtrip5(variants.Some[uint32](32))
+	println(re1.Unwrap())
+	println(re2)
 }
 
 func (i VariantsImpl) RoundtripOption1(a variants.Option[variants.Option[uint32]]) variants.Option[variants.Option[uint32]] {

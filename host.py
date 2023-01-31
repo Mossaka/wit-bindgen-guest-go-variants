@@ -19,17 +19,17 @@ class MyImports(imports.Imports):
     def option_roundtrip4(self, a: Optional[Ar]) -> Optional[Ar]:
         return a
     def result_roundtrip(self, a: Result[int, int]) -> Result[int, int]:
-        print(a)
         return a
     def roundtrip_option_result(self, a: Optional[Result[int, None]]) -> Optional[Result[int, None]]:
         return a
     def roundtrip_result_option(self, a: Result[Optional[int], None]) -> Result[Optional[int], None]:
         return a
-
+    def option_roundtrip5(self, a: Optional[int]) -> Tuple[Optional[int], int]:
+        return a, 1
 
 class Logging(wasi_logging.WasiLogging):
     def log(self, level: Level, context: str, message: str) -> None:
-        print(f"{message}")
+        print(f"{message}", end="")
 
 class Filesystem(wasi_filesystem.WasiFilesystem):
     def write_via_stream(self, fd: Descriptor, offset: Filesize) -> Result[WasiStream, Errno]:
